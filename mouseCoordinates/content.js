@@ -31,40 +31,83 @@ document.addEventListener('mousemove', (event) => {
   coordDiv.innerHTML = `Recording (${gesturePath.length} pts)...<br>X: ${x}, Y: ${y}`;
 });
 
+// document.addEventListener('mouseup', () => {
+//   if (!isDrawing) return;
+//   isDrawing = false;
+
+//   coordDiv.innerHTML = `Gesture recorded with ${gesturePath.length} points.`;
+//   console.log("🖊️ Gesture path:", gesturePath);
+
+//   // Optional: send gesturePath to background script or model
+// });
 document.addEventListener('mouseup', () => {
   if (!isDrawing) return;
   isDrawing = false;
 
   coordDiv.innerHTML = `Gesture recorded with ${gesturePath.length} points.`;
-  console.log("🖊️ Gesture path:", gesturePath);
+  console.log("Gesture path:", gesturePath);
 
-  // Optional: send gesturePath to background script or model
+  // === Send gesture to Flask server ===
+fetch("http://localhost:5050/predict", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ gesture: gesturePath }),
+})
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.error) {
+      coordDiv.innerHTML = `${data.error}`;
+      alert(`${data.error}`);
+    } else {
+      const msg = `Prediction: ${data.majority_vote}`;
+      coordDiv.innerHTML = msg;
+      const action = data.majority_vote;
+
+      if (action === "line-left-right") {
+        history.forward();
+      } else if (action === "line-right-left") {
+        history.back();
+      } else if (action === "circle") {
+        location.reload();
+      }
+      // alert(msg);
+    }
+  })
+  .catch((err) => {
+    console.error("Prediction failed:", err);
+    coordDiv.innerHTML = "Could not connect to server.";
+    alert("Could not connect to server.");
+  });
+
 });
 
 
-// Create a simple floating control panel
-const controlPanel = document.createElement('div');
-controlPanel.style.position = 'fixed';
-controlPanel.style.top = '10px';
-controlPanel.style.left = '10px';
-controlPanel.style.backgroundColor = '#222';
-controlPanel.style.color = 'white';
-controlPanel.style.padding = '10px';
-controlPanel.style.borderRadius = '8px';
-controlPanel.style.zIndex = '9999';
-controlPanel.style.display = 'flex';
-controlPanel.style.gap = '8px';
-controlPanel.style.fontSize = '14px';
-controlPanel.style.boxShadow = '0 0 8px rgba(0,0,0,0.4)';
-controlPanel.innerHTML = `
-  <button id="btn-back">← Back</button>
-  <button id="btn-forward">→ Forward</button>
-  <button id="btn-reload">🔄 Reload</button>
-`;
 
-document.body.appendChild(controlPanel);
+// // Create a simple floating control panel
+// const controlPanel = document.createElement('div');
+// controlPanel.style.position = 'fixed';
+// controlPanel.style.top = '10px';
+// controlPanel.style.left = '10px';
+// controlPanel.style.backgroundColor = '#222';
+// controlPanel.style.color = 'white';
+// controlPanel.style.padding = '10px';
+// controlPanel.style.borderRadius = '8px';
+// controlPanel.style.zIndex = '9999';
+// controlPanel.style.display = 'flex';
+// controlPanel.style.gap = '8px';
+// controlPanel.style.fontSize = '14px';
+// controlPanel.style.boxShadow = '0 0 8px rgba(0,0,0,0.4)';
+// controlPanel.innerHTML = `
+//   <button id="btn-back">← Back</button>
+//   <button id="btn-forward">→ Forward</button>
+//   <button id="btn-reload">🔄 Reload</button>
+// `;
 
-// Button actions
-document.getElementById('btn-back').onclick = () => history.back();
-document.getElementById('btn-forward').onclick = () => history.forward();
-document.getElementById('btn-reload').onclick = () => location.reload();
+// document.body.appendChild(controlPanel);
+
+// // Button actions
+// document.getElementById('btn-back').onclick = () => history.back();
+// document.getElementById('btn-forward').onclick = () => history.forward();
+// document.getElementById('btn-reload').onclick = () => location.reload();

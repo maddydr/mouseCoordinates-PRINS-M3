@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.pkl
+*.ipynb_checkpoints/
+
+.venv/
+env/
+venv/
+
+.DS_Store
+mouseCoordinates/.DS_Store
+
+mouseCoordinates/server/models/*.pkl
+
+*.log
+*.tmp
