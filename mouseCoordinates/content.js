@@ -1,3 +1,26 @@
+
+let gestureEnabled = true; 
+const toggleBtn = document.createElement('button');
+toggleBtn.textContent = '🟢 Gesture: ON';
+toggleBtn.style.position = 'fixed';
+toggleBtn.style.bottom = '60px'; // so it doesn't overlap coordDiv
+toggleBtn.style.right = '10px';
+toggleBtn.style.padding = '8px 12px';
+toggleBtn.style.backgroundColor = '#333';
+toggleBtn.style.color = 'white';
+toggleBtn.style.border = 'none';
+toggleBtn.style.borderRadius = '6px';
+toggleBtn.style.cursor = 'pointer';
+toggleBtn.style.zIndex = '9999';
+toggleBtn.style.fontSize = '14px';
+document.body.appendChild(toggleBtn);
+
+toggleBtn.onclick = () => {
+  gestureEnabled = !gestureEnabled;
+  toggleBtn.textContent = gestureEnabled ? '🟢 Gesture: ON' : '🔴 Gesture: OFF';
+  coordDiv.innerHTML = gestureEnabled ? 'Gesture detection is ON' : 'Gesture detection is OFF';
+};
+
 // Create a floating div to display live coordinates
 const coordDiv = document.createElement('div');
 coordDiv.style.position = 'fixed';
@@ -15,7 +38,7 @@ let gesturePath = [];
 
 document.addEventListener('mousedown', (event) => {
   // Only respond to left click (button === 0)
-  if (event.button !== 0) return;
+  if (!gestureEnabled || event.button !== 0) return;
   isDrawing = true;
   gesturePath = [[event.clientX, event.clientY]];
   coordDiv.innerHTML = `Start Drawing...`;
@@ -23,6 +46,7 @@ document.addEventListener('mousedown', (event) => {
 
 document.addEventListener('mousemove', (event) => {
   if (!isDrawing) return;
+  if (!gestureEnabled) return;
 
   const x = event.clientX;
   const y = event.clientY;
@@ -42,6 +66,7 @@ document.addEventListener('mousemove', (event) => {
 // });
 document.addEventListener('mouseup', () => {
   if (!isDrawing) return;
+  if (!gestureEnabled) return;
   isDrawing = false;
 
   coordDiv.innerHTML = `Gesture recorded with ${gesturePath.length} points.`;
