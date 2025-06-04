@@ -36,7 +36,7 @@ document.addEventListener('mousemove', (event) => {
 //   isDrawing = false;
 
 //   coordDiv.innerHTML = `Gesture recorded with ${gesturePath.length} points.`;
-//   console.log("🖊️ Gesture path:", gesturePath);
+//   console.log("Gesture path:", gesturePath);
 
 //   // Optional: send gesturePath to background script or model
 // });
@@ -58,8 +58,8 @@ fetch("http://localhost:5050/predict", {
   .then((res) => res.json())
   .then((data) => {
     if (data.error) {
-      coordDiv.innerHTML = `${data.error}`;
-      alert(`${data.error}`);
+      // coordDiv.innerHTML = `${data.error}`;
+      // alert(`${data.error}`);
     } else {
       const msg = `Prediction: ${data.majority_vote}`;
       coordDiv.innerHTML = msg;
@@ -76,9 +76,9 @@ fetch("http://localhost:5050/predict", {
     }
   })
   .catch((err) => {
-    console.error("Prediction failed:", err);
-    coordDiv.innerHTML = "Could not connect to server.";
-    alert("Could not connect to server.");
+    // console.error("Prediction failed:", err);
+    // coordDiv.innerHTML = "Could not connect to server.";
+    // alert("Could not connect to server.");
   });
 
 });
@@ -102,7 +102,7 @@ fetch("http://localhost:5050/predict", {
 // controlPanel.innerHTML = `
 //   <button id="btn-back">← Back</button>
 //   <button id="btn-forward">→ Forward</button>
-//   <button id="btn-reload">🔄 Reload</button>
+//   <button id="btn-reload"> Reload</button>
 // `;
 
 // document.body.appendChild(controlPanel);
